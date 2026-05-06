@@ -1,0 +1,11 @@
+"本課程教您如何在班次開始前完成引擎室例行巡檢。請依步驟順序操作；遇到不正常狀況，按下螢幕底下的例外處理按鈕。預計時間：5 分鐘。"
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,啟動前,引擎蓋,開啟引擎蓋,"拉動駕駛座下方的引擎蓋拉桿（紅色把手）；走到車頭前方掀起引擎蓋並用支撐桿固定。",engine-hood.jpg,請走到車頭前方,,,,,,
+2,啟動前,油液檢查,檢查機油,"拔出機油尺、用乾布擦淨；插回後再次拔出，觀察油位是否在 MIN 與 MAX 之間。同時注意機油顏色與是否含有顆粒。",oil-dipstick.jpg,,油位過低,8,顏色偏黑,9,含金屬屑或氣味異常,"立即停止操作，聯絡資深技師處理。在維修完成前不得發動車輛。"
+3,啟動前,油液檢查,檢查冷卻液,"觀察副水箱液位，應位於 MIN 與 MAX 之間。冷態時應以 MIN 為基準。",coolant.jpg,,液位低於 MIN,"請補充冷卻液至 MAX 線。注意：冷態才開蓋以免燙傷。",,,,
+4,啟動前,油液檢查,檢查雨刷水,確認雨刷水箱裝有清洗液，於低水位線以上。,,,,,,,,
+5,啟動測試,,啟動引擎,踩下剎車、按下啟動按鈕。引擎應於 2 秒內順利發動。,startup.mp4,,,,,,,
+6,啟動測試,,觀察儀表板,"啟動後 5 秒內所有警示燈應熄滅。若有任何紅色警示燈持續顯示，請立即按下例外處理。",dashboard.jpg,,引擎警示燈亮,"立即熄火並記錄燈號。聯絡技師時提供燈號代碼。",機油警示燈亮,8,,
+7,啟動測試,,怠速 30 秒,讓引擎於怠速狀態運轉 30 秒，觀察是否平順、是否有異音。,idle.mp4,完成後請熄火並走出車外,,,,,,
+8,例外處理,,補充機油,"開啟機油加注口、慢慢倒入指定型號機油，每次加 100ml 後重新測量油位，避免加過量。完成後請回到步驟 2 重新確認。",add-oil.mp4,,,,,,,
+9,例外處理,,通報更換機油,機油已劣化，請通報維修部門安排更換。當前車輛暫停使用。,,,,,,,,

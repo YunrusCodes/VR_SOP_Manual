@@ -1,0 +1,13 @@
+{
+  "company": "acme",
+  "courses": [
+    {
+      "name": "brake-maintenance",
+      "displayName": "煞車保養"
+    },
+    {
+      "name": "engine-room-inspection",
+      "displayName": "引擎室巡檢"
+    }
+  ]
+}
