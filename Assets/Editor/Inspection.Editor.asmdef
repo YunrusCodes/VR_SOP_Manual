@@ -1,0 +1,21 @@
+{
+    "name": "Inspection.Editor",
+    "rootNamespace": "Inspection.EditorTools",
+    "references": [
+        "Inspection.Domain",
+        "Inspection.Runtime",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

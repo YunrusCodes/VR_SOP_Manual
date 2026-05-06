@@ -1,0 +1,7 @@
+"細胞如何由一變二？本課程帶你走完一次完整的有絲分裂（mitosis），包括細胞週期、染色體複製、四個分裂期，以及兩個全新子細胞的誕生。預計時間：5 分鐘。"
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,基礎,週期,細胞週期概覽,"細胞週期可分為「間期（interphase）」與「分裂期（M 期）」。間期約佔 90% 時間，再細分為 G1（生長）、S（DNA 複製）、G2（準備分裂）。檢查點機制負責確保 DNA 完整性，如有錯誤會啟動修復或凋亡。",cell_cycle.jpg,進入 S 期看染色體複製,什麼是 G0 期,"G0 是細胞暫時或永久退出細胞週期的休眠狀態。神經元、心肌細胞長期處於 G0；幹細胞可在需要時重新進入 G1。",,,,
+2,基礎,DNA 複製,染色體加倍,"S 期會把每條 DNA 完整複製成兩條相同的姐妹染色分體（sister chromatids），由著絲粒（centromere）連在一起。人類體細胞 46 條染色體在 S 期結束後變成 46 對共 92 條 DNA 分子，但仍算 46 條染色體。",chromosome.jpg,,,,,,,
+3,有絲分裂,M 期,四個分裂期,"M 期依序為：前期（chromosomes 凝縮、核膜瓦解）、中期（染色體排列在赤道板）、後期（姐妹染色分體被紡錘絲拉向兩極）、末期（核膜重組、染色體解凝縮）。觀察影片中染色體在紡錘絲上的舞動。",mitosis.mp4,接著看細胞質分裂,紡錘絲是什麼,"紡錘絲由微管蛋白（tubulin）聚合而成，從細胞兩極的中心體（centrosome）伸出，連接染色體的著絲粒，依靠動力蛋白（dynein/kinesin）拉動染色體。",抗癌藥物如何阻斷分裂,"紫杉醇（Taxol）穩定微管使其無法拆解；長春鹼（vincristine）抑制微管聚合。兩者都會阻止癌細胞完成有絲分裂。",,
+4,有絲分裂,胞質分裂,細胞一分為二,"末期結束後啟動細胞質分裂（cytokinesis）。動物細胞由肌動蛋白與肌凝蛋白形成「收縮環」從外向內勒緊；植物細胞則在中央由高基氏體囊泡組成「細胞板」向外擴展。",cytokinesis.jpg,,動植物分裂方式為何不同,"植物細胞有堅硬的細胞壁，無法靠收縮環勒斷，只能在中間建造新的細胞壁分隔。",,,,
+5,結果,完成,兩個子細胞,"分裂結束後產生兩個基因組完全相同的子細胞，各自進入 G1 開啟新的細胞週期。整個過程在人類細胞約需 24 小時，其中 M 期僅 1 小時。完成本課程！",,,結束課程,"感謝完成「細胞分裂 — 有絲分裂」！可繼續探索其他主題。",,,,

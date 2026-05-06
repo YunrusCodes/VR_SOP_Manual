@@ -71,6 +71,19 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Python / API
+.venv/
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+
+# api/storage/ media intentionally tracked: paid AI generations (Seedance / Seedream)
+# that we don't want to regenerate. If repo grows too large, move to git LFS.
+
+# dotnet (used by api/.csharp_check standalone CsvParser sanity tool)
+bin/
+obj/
+
 # OS generated files
 .DS_Store
 .DS_Store?

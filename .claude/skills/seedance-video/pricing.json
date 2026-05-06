@@ -1,0 +1,22 @@
+{
+  "_comment": "Seedance per-million-token rates (USD). BytePlus has no pricing API, so this file is the skill's source of truth. Update by hand from https://docs.byteplus.com/en/docs/ModelArk/1544106 when the model lineup or rates rotate.",
+  "last_updated": "2026-05-03",
+  "source_url": "https://docs.byteplus.com/en/docs/ModelArk/1544106",
+  "currency": "USD",
+  "unit": "per_million_tokens",
+  "rates": {
+    "seedance-2-0":          { "rate": 4.00, "confidence": "estimated", "note": "no confirmed BytePlus rate; conservative" },
+    "seedance-2-0-fast":     { "rate": 2.00, "confidence": "estimated" },
+    "seedance-1-5-pro":      { "rate": 3.00, "confidence": "estimated", "note": "calibrate from BytePlus bill detail after a real run" },
+    "seedance-1-0-pro":      { "rate": 2.00, "confidence": "estimated" },
+    "seedance-1-0-pro-fast": { "rate": 1.50, "confidence": "estimated" },
+    "seedance-1-0-lite":     { "rate": 1.00, "confidence": "estimated" }
+  },
+  "fallback_rate": 4.00,
+  "match_strategy": "longest_prefix_of_model_id_minus_version_suffix",
+  "examples": {
+    "seedance-1-5-pro-251215": "seedance-1-5-pro -> 3.00",
+    "seedance-2-0-260128":     "seedance-2-0 -> 4.00",
+    "doubao-seedance-2-0-260128": "strip 'doubao-' prefix, then seedance-2-0 -> 4.00"
+  }
+}

@@ -1,0 +1,5 @@
+"煞車保養快速指南。內容簡短，僅作為清單端點測試用。"
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,煞車檢查,,目視煞車片,觀察煞車片厚度，若小於 3mm 應更換。,,,厚度不足,"請通報維修部門排程更換。",,,,
+2,煞車檢查,,測試煞車踏板,踩下煞車踏板確認回彈正常、無異音。,,,踩起來軟綿綿,"剎車油可能不足或有空氣，需排氣。",,,,
+3,煞車檢查,,檢查煞車油,確認煞車油液位於 MIN/MAX 之間。,,,,,,,,
