@@ -20,6 +20,7 @@ namespace Inspection.UI
         [SerializeField] TMP_Text nextIndication;
 
         [SerializeField] GameObject mediaPanel;
+        [SerializeField] RectTransform leftColumn;
         [SerializeField] RawImage imageView;
         [SerializeField] RawImage videoView;
         [SerializeField] VideoPlayer videoPlayer;
@@ -106,6 +107,16 @@ namespace Inspection.UI
                 if (imageView != null && imageView.texture == _currentTexture) imageView.texture = null;
                 Destroy(_currentTexture);
                 _currentTexture = null;
+            }
+
+            // When a step has no media, expand the text column to fill the panel; otherwise
+            // restore the 60/40 split. This avoids the empty-right-column dead-zone we saw in
+            // VR walkthroughs of solar step 5 (望遠鏡入門) and step 7 (月球延伸).
+            if (leftColumn != null)
+            {
+                var max = leftColumn.anchorMax;
+                max.x = media is Media.None ? 1f : 0.6f;
+                leftColumn.anchorMax = max;
             }
 
             switch (media)

@@ -1,7 +1,28 @@
 # 交付驗收 — 智慧巡檢 / 科普課程平台
 
-**日期**：2026-05-07（夜班自動跑）
-**狀態**：3 門教育課程已內容化、所有 UI 流程經 PLAYMODE 自動 walker 截圖驗證、例外按鈕 (goto + message) 觸發成功。
+**日期**：2026-05-07（夜班自動跑 + 早班 VR 視角覆驗）
+**狀態**：3 門教育課程已內容化、所有 UI 流程經 PLAYMODE 自動 walker 截圖驗證（含 ScreenSpaceOverlay 與 WorldSpace VR 兩套）、例外按鈕 (goto + message) 觸發成功、VR 視角字級已調整為頭顯舒適閱讀比例。
+
+## 0. VR 視角驗收（[App_VR.unity](../Assets/Scenes/App_VR.unity)）
+
+20 張 VR 視角快照記錄於 [qa/](.) 目錄，前綴 `vr_`：
+
+- 課程清單：[`vr_manual_list.png`](vr_manual_list.png)
+- 細胞分裂（5 步）：[`vr_mitosis_step01.png`](vr_mitosis_step01.png) … step05
+- 太陽系巡禮（7 步）：[`vr_solar_step01.png`](vr_solar_step01.png) … step07
+- 火山形成（6 步）：[`vr_volcano_step01.png`](vr_volcano_step01.png) … step06
+- 走訪結束：[`vr_manual_list_final.png`](vr_manual_list_final.png)
+
+VR 視角專屬問題與修補（給後續 onboard 的同事備查）：
+
+| 問題 | 修補 |
+|---|---|
+| `CanvasScaler` 即使 disabled，play 一進去會把 RectTransform reset 成 (960,540,2) scale=(0,0,0) → 整個 game view 全黑 | 移除 CanvasScaler 元件 + 加 [`VRCanvasPinner`](../Assets/Scripts/Debug/VRCanvasPinner.cs) 每 LateUpdate 重新固定 pos (0,1.6,2) scale 0.0013 |
+| URP 下 `Camera.Render()` 不畫 WorldSpace UI（snapshot 全黑） | 改用 `RenderPipeline.SubmitRenderRequest` 走 URP 正規 path，coroutine 內 yield WaitForEndOfFrame；見 [QASnapshot.cs](../Assets/Scripts/Debug/QASnapshot.cs) |
+| 2m 距離下字級偏小 | Header 72→80, StepName 60→72, Description 36→44, Breadcrumb/StepCounter 36→42, NextIndication 28→32, 各按鈕 36→38, ExceptionButton 28→34 + size 220×64→280×88, NavBar 220×70→280×90, CourseCard title 40→52 + 高度 130→160 |
+| 無媒體步驟（solar 5/7, volcano 3/6, mitosis 5）右半空白浪費 | [`CourseView.UpdateMedia`](../Assets/Scripts/UI/CourseView.cs) 偵測 `Media.None` 時把 `leftColumn.anchorMax.x` 從 0.6 改成 1.0，文字自動全寬展開 |
+| 卡片點擊在 walker context 偶爾不觸發 OnEnterAsync | walker 改用 reflection 抓 `ManualListView._client`，直接 `_router.ShowCourse(course)` 繞過按鈕；見 [VRMultiCourseWalker.cs](../Assets/Scripts/Debug/VRMultiCourseWalker.cs) |
+
 
 ## 1. 已交付課程
 
