@@ -14,6 +14,11 @@ namespace Inspection.App
         [SerializeField] CourseView courseView;
         [SerializeField] LoadingOverlay overlay;
 
+        // Exposed for editor-only QA walkers — they need the client + router for scripted
+        // navigation without going through UI button clicks.
+        public ICourseClient Client { get; private set; }
+        public AppRouter Router => router;
+
         async void Awake()
         {
             if (settings == null) { Debug.LogError("AppBootstrapper: settings is not assigned."); return; }
@@ -37,6 +42,7 @@ namespace Inspection.App
                 return;
             }
 
+            Client = client;
             manualList.Init(client, router, overlay);
             courseView.Init(client, router, overlay);
 

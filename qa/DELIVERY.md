@@ -23,6 +23,27 @@ VR 視角專屬問題與修補（給後續 onboard 的同事備查）：
 | 無媒體步驟（solar 5/7, volcano 3/6, mitosis 5）右半空白浪費 | [`CourseView.UpdateMedia`](../Assets/Scripts/UI/CourseView.cs) 偵測 `Media.None` 時把 `leftColumn.anchorMax.x` 從 0.6 改成 1.0，文字自動全寬展開 |
 | 卡片點擊在 walker context 偶爾不觸發 OnEnterAsync | walker 改用 reflection 抓 `ManualListView._client`，直接 `_router.ShowCourse(course)` 繞過按鈕；見 [VRMultiCourseWalker.cs](../Assets/Scripts/Debug/VRMultiCourseWalker.cs) |
 
+## 0.1 分層大綱面板（spec 額外延伸）
+
+[OutlinePanel.cs](../Assets/Scripts/UI/OutlinePanel.cs) 提供 spec.md 沒明列的「點擊分層索引跳步」功能。spec §7.7 說 breadcrumb 不可點，所以在 TopBar 加一顆「目錄」按鈕，按下展開左側 40% 寬的抽屜，依 MainTitle / SubTitle 分群列出所有 step，點任一 step 直接 GoTo。當前 step 用金色粗體標記。
+
+關閉條件：再按「目錄」、按 ✕ 關閉、或點任一 step 後自動關閉。
+
+驗收快照（5 張）：
+- [`vr_outline_01_step1_closed.png`](vr_outline_01_step1_closed.png) — 太陽系 step1，panel 關閉狀態
+- [`vr_outline_02_open.png`](vr_outline_02_open.png) — 同步驟 panel 展開
+- [`vr_outline_03_jumped_to_5.png`](vr_outline_03_jumped_to_5.png) — 從 outline 跳到 step5（望遠鏡入門）
+- [`vr_outline_04_open_at_5.png`](vr_outline_04_open_at_5.png) — step5 重開 panel（金色高亮跟著移動）
+- [`vr_outline_05_jumped_to_7.png`](vr_outline_05_jumped_to_7.png) — 再跳 step7（月球延伸）
+
+實作坑（給 onboarding）：
+
+| 問題 | 修補 |
+|---|---|
+| Toggle 按鈕的 TMP Label 不 render「目錄」中文（其他位置正常） | 改成 `Object.Instantiate(BackToListButton)` 複製一顆能正常 render 的按鈕，重新指 `outlineToggleButton` ref。原因待查（同 LiberationSans SDF + 同 fallback，但新建的 TMP 就是不 render） |
+| OutlinePanel 開啟後 Bind 13 個 row 都掛上去了卻看不到 | Viewport 用了 `Mask` + `Image alpha=0.001` — alpha 太低被 mask 視為透明，children 全裁掉。換成 `RectMask2D`（純 rect 裁切，不看 alpha） |
+| StepCounter 跟 OutlineToggleButton 重疊 | StepCounter anchorMax 從 0.85 縮到 0.72，讓出右側空間 |
+
 
 ## 1. 已交付課程
 

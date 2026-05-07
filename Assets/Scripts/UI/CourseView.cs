@@ -32,6 +32,9 @@ namespace Inspection.UI
         [SerializeField] Button nextStepButton;
         [SerializeField] Button backToListButton;
 
+        [SerializeField] OutlinePanel outlinePanel;
+        [SerializeField] Button outlineToggleButton;
+
         ICourseClient _client;
         AppRouter _router;
         LoadingOverlay _overlay;
@@ -49,6 +52,8 @@ namespace Inspection.UI
             if (prevStepButton != null) prevStepButton.onClick.AddListener(OnPrev);
             if (nextStepButton != null) nextStepButton.onClick.AddListener(OnNext);
             if (backToListButton != null) backToListButton.onClick.AddListener(OnBackToList);
+            if (outlineToggleButton != null) outlineToggleButton.onClick.AddListener(OnToggleOutline);
+            if (outlinePanel != null) outlinePanel.Init(GoToStepOrder);
         }
 
         public void Bind(Course course)
@@ -61,7 +66,25 @@ namespace Inspection.UI
                 return;
             }
             ShowStepAt(0);
+            if (outlinePanel != null) outlinePanel.Hide();
         }
+
+        void OnToggleOutline()
+        {
+            if (outlinePanel == null || _course == null) return;
+            if (outlinePanel.gameObject.activeSelf)
+            {
+                outlinePanel.Hide();
+            }
+            else
+            {
+                int currentOrder = _course.Steps[_currentIndex].Order;
+                outlinePanel.Bind(_course, currentOrder);
+                outlinePanel.Show();
+            }
+        }
+
+        public void TestToggleOutline() => OnToggleOutline();
 
         void ShowStepAt(int index)
         {
