@@ -84,6 +84,9 @@ __pycache__/
 bin/
 obj/
 
+# Unity MCP / Unity Tooling native binary cache
+/.utmp/
+
 # OS generated files
 .DS_Store
 .DS_Store?
