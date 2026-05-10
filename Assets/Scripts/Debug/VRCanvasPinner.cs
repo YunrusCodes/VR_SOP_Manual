@@ -14,7 +14,7 @@ namespace Inspection.Debugging
     public sealed class VRCanvasPinner : MonoBehaviour
     {
         public Vector3 worldPosition = new Vector3(0f, 1.6f, 2.0f);
-        public Vector3 localScale = new Vector3(0.0013f, 0.0013f, 0.0013f);
+        public Vector3 localScale = new Vector3(0.0018f, 0.0018f, 0.0018f);
         public Quaternion rotation = Quaternion.identity;
         public Vector2 sizeDelta = new Vector2(1920, 1080);
 
