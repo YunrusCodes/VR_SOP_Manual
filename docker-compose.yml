@@ -1,0 +1,14 @@
+services:
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    image: vr-sop-manual-api:latest
+    container_name: vr-sop-manual-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api/storage:/data/storage
+    environment:
+      STORAGE_DIR: /data/storage
+    restart: unless-stopped
