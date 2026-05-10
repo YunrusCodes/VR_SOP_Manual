@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1717dd2574fdcda458fa50b99e8de479, type: 3}
   m_Name: AppSettings
   m_EditorClassIdentifier: Inspection.Runtime::Inspection.App.AppSettings
-  ApiBaseUrl: http://127.0.0.1:8000
+  ApiBaseUrl: http://192.168.1.105:8000
   Company: edu
   VerboseLog: 1

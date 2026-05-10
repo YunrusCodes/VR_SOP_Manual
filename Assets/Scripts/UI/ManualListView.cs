@@ -6,6 +6,7 @@ using Inspection.Domain;
 using Inspection.Net;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Inspection.UI
 {
@@ -15,6 +16,7 @@ namespace Inspection.UI
         [SerializeField] CourseCard courseCardPrefab;
         [SerializeField] GameObject emptyState;
         [SerializeField] TMP_Text errorLabel;
+        [SerializeField] Button refreshButton;
 
         ICourseClient _client;
         AppRouter _router;
@@ -26,6 +28,18 @@ namespace Inspection.UI
             _client = client;
             _router = router;
             _overlay = overlay;
+            if (refreshButton != null)
+            {
+                refreshButton.onClick.RemoveAllListeners();
+                refreshButton.onClick.AddListener(() => _ = RefreshWithOverlayAsync());
+            }
+        }
+
+        async Task RefreshWithOverlayAsync()
+        {
+            if (_overlay != null) _overlay.Show("重新載入課程清單…");
+            try { await RefreshAsync(); }
+            finally { if (_overlay != null) _overlay.Hide(); }
         }
 
         public async Task RefreshAsync()

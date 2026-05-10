@@ -6,7 +6,7 @@ namespace Inspection.App
     public sealed class AppSettings : ScriptableObject
     {
         [Tooltip("Base URL of the FastAPI backend. Use the dev machine's LAN IP for Quest 3 testing.")]
-        public string ApiBaseUrl = "http://192.168.1.10:8000";
+        public string ApiBaseUrl = "http://192.168.1.105:8000";
 
         [Tooltip("Company namespace under storage/. Hard-coded in MVP.")]
         public string Company = "acme";

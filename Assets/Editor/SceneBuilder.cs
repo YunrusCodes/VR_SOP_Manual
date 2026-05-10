@@ -73,7 +73,7 @@ namespace Inspection.EditorTools
             var existing = AssetDatabase.LoadAssetAtPath<AppSettings>(AppSettingsPath);
             if (existing != null) return existing;
             var s = ScriptableObject.CreateInstance<AppSettings>();
-            s.ApiBaseUrl = "http://192.168.1.10:8000";
+            s.ApiBaseUrl = "http://192.168.1.105:8000";
             s.Company = "acme";
             s.VerboseLog = true;
             AssetDatabase.CreateAsset(s, AppSettingsPath);
