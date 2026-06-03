@@ -1770,7 +1770,7 @@ MonoBehaviour:
   _maxInteractors: -1
   _maxSelectingInteractors: -1
   _data: {fileID: 0}
-  _pointableElement: {fileID: 0}
+  _pointableElement: {fileID: 1284787496}
   _surface: {fileID: 478237509}
   _selectSurface: {fileID: 0}
   _movementProvider: {fileID: 0}
