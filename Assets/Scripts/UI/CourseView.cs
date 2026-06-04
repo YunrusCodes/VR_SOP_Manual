@@ -95,8 +95,8 @@ namespace Inspection.UI
 
             if (breadcrumb != null)
                 breadcrumb.text = string.IsNullOrEmpty(step.SubTitle)
-                    ? $"{step.MainTitle}　／　{step.Name}"
-                    : $"{step.MainTitle}　／　{step.SubTitle}　／　{step.Name}";
+                    ? $"<color=#80a0c0>{step.MainTitle}</color>  <color=#506880>▸</color>  {step.Name}"
+                    : $"<color=#80a0c0>{step.MainTitle}</color>  <color=#506880>▸</color>  <color=#80a0c0>{step.SubTitle}</color>  <color=#506880>▸</color>  {step.Name}";
 
             if (stepCounter != null) stepCounter.text = $"{index + 1} / {_course.Steps.Count}";
             if (stepName != null) stepName.text = step.Name;
@@ -113,6 +113,11 @@ namespace Inspection.UI
 
             if (prevStepButton != null) prevStepButton.interactable = index > 0;
             if (nextStepButton != null) nextStepButton.interactable = index < _course.Steps.Count - 1;
+
+            // Keep the always-visible sidebar outline highlight in sync with the
+            // active step. Outline rebuild is cheap (a few rows of TMP text).
+            if (outlinePanel != null && outlinePanel.gameObject.activeSelf)
+                outlinePanel.Bind(_course, step.Order);
         }
 
         void UpdateMedia(Media media)

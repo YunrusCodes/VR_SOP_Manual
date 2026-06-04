@@ -3,41 +3,47 @@ using UnityEngine;
 namespace Inspection.UI
 {
     /// <summary>
-    /// Keeps a World Space Canvas docked in front of the user with damping.
-    /// The canvas slides toward a fixed offset ahead of the centre-eye anchor
-    /// and rotates to face it; small head movements don't yank the panel — it
-    /// only catches up when the user looks far enough away that the panel
-    /// drifts outside <see cref="recenterAngle"/> from gaze.
-    ///
-    /// Lives on the RootCanvas. The eye anchor reference is resolved at
-    /// runtime so the script doesn't take a hard reference on Meta SDK types.
+    /// Places a World Space Canvas in front of the user at the moment their
+    /// head pose becomes stable — this avoids snapping while the user is
+    /// still putting on the headset or while the app is mid-transition.
+    /// After the initial snap the panel stays put; only big head turns drag
+    /// it back into view via lazy follow.
     /// </summary>
     public sealed class CanvasBillboard : MonoBehaviour
     {
-        [SerializeField] float distance = 1.5f;
-        [SerializeField] float heightOffset = -0.1f;
-        [SerializeField] float positionDamping = 4f;
-        [SerializeField] float rotationDamping = 6f;
-        [SerializeField] float recenterAngle = 25f;
+        [SerializeField] float distance = 0.32f;
+        [SerializeField] float verticalGazeOffset = -0.10f;
+        [SerializeField] float rotationDamping = 14f;
+        [SerializeField] float positionDamping = 6f;
+        [SerializeField] float recenterAngleDegrees = 30f;
+        [SerializeField] float stableRequiredSeconds = 1.0f;
 
         Transform _eye;
-        bool _recentering = true;
+        bool _firstFramePlaced;
+        int _eyeWaitFrames;
+        Quaternion _lastEyeRot = Quaternion.identity;
+        float _stableTime;
+        bool _recentering;
 
-        void Awake()
+        void OnEnable() => Recenter();
+
+        /// <summary>Reset state so the panel snaps to gaze again on the next stable frame.</summary>
+        public void Recenter()
         {
-            _eye = FindCenterEye();
+            _firstFramePlaced = false;
+            _eyeWaitFrames = 0;
+            _stableTime = 0f;
+            _recentering = false;
         }
 
         Transform FindCenterEye()
         {
-            // Look for OVRCameraRig.centerEyeAnchor by walking the scene roots.
             var rig = GameObject.Find("OVRCameraRig");
             if (rig != null)
             {
                 var found = FindByName(rig.transform, "CenterEyeAnchor");
                 if (found != null) return found;
             }
-            // Fallback: Camera.main.
             var cam = Camera.main;
             return cam != null ? cam.transform : null;
         }
@@ -55,24 +61,63 @@ namespace Inspection.UI
 
         void LateUpdate()
         {
-            if (_eye == null) { _eye = FindCenterEye(); if (_eye == null) return; }
+            if (_eye == null)
+            {
+                _eye = FindCenterEye();
+                if (_eye == null) return;
+            }
 
-            Vector3 forwardFlat = _eye.forward; forwardFlat.y = 0; if (forwardFlat.sqrMagnitude < 1e-4f) forwardFlat = Vector3.forward; forwardFlat.Normalize();
-            Vector3 desiredPos = _eye.position + forwardFlat * distance + Vector3.up * heightOffset;
+            // OVR centre eye reports (0,0,0) until a head pose is available.
+            if (!_firstFramePlaced && _eye.position == Vector3.zero && _eyeWaitFrames < 30)
+            {
+                _eyeWaitFrames++;
+                _lastEyeRot = _eye.rotation;
+                return;
+            }
 
-            Vector3 toCanvas = transform.position - _eye.position; toCanvas.y = 0; toCanvas.Normalize();
-            float angle = Vector3.Angle(forwardFlat, toCanvas);
-            if (angle > recenterAngle) _recentering = true;
+            if (!_firstFramePlaced)
+            {
+                // Snap only after the head has been roughly still for ~0.35 s,
+                // so we don't anchor to whatever direction the user happened
+                // to glance toward during loading.
+                float angDelta = Quaternion.Angle(_lastEyeRot, _eye.rotation);
+                _lastEyeRot = _eye.rotation;
+                if (angDelta < 1.5f) _stableTime += Time.deltaTime;
+                else _stableTime = 0f;
+                if (_stableTime < stableRequiredSeconds) return;
+
+                Vector3 desiredPos = _eye.position + _eye.forward * distance + Vector3.up * verticalGazeOffset;
+                transform.position = desiredPos;
+                Vector3 look = desiredPos - _eye.position;
+                if (look.sqrMagnitude > 1e-6f)
+                    transform.rotation = Quaternion.LookRotation(look);
+                _firstFramePlaced = true;
+                return;
+            }
+
+            // Lazy follow: when the user looks far enough from the panel
+            // (e.g., turning to look at something across the room), slide it
+            // back to the new gaze rather than leaving it stranded.
+            Vector3 panelDir = transform.position - _eye.position;
+            if (panelDir.sqrMagnitude > 1e-4f)
+            {
+                float angle = Vector3.Angle(_eye.forward, panelDir.normalized);
+                if (angle > recenterAngleDegrees) _recentering = true;
+            }
 
             if (_recentering)
             {
-                transform.position = Vector3.Lerp(transform.position, desiredPos, Time.deltaTime * positionDamping);
-                if ((transform.position - desiredPos).sqrMagnitude < 0.0025f) _recentering = false;
+                Vector3 targetPos = _eye.position + _eye.forward * distance + Vector3.up * verticalGazeOffset;
+                transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * positionDamping);
+                if (Vector3.Distance(transform.position, targetPos) < 0.01f) _recentering = false;
             }
 
-            Vector3 lookDir = transform.position - _eye.position; lookDir.y = 0; if (lookDir.sqrMagnitude < 1e-4f) lookDir = forwardFlat;
-            Quaternion targetRot = Quaternion.LookRotation(lookDir);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationDamping);
+            Vector3 toEye = transform.position - _eye.position;
+            if (toEye.sqrMagnitude > 1e-4f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(toEye);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationDamping);
+            }
         }
     }
 }
