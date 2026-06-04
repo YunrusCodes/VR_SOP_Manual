@@ -5,7 +5,9 @@
         "Inspection.Domain",
         "Inspection.Runtime",
         "Unity.TextMeshPro",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Oculus.Interaction",
+        "Oculus.VR"
     ],
     "includePlatforms": [
         "Editor"

@@ -13,6 +13,7 @@ namespace Inspection.UI
     {
         [SerializeField] float distance = 0.32f;
         [SerializeField] float verticalGazeOffset = -0.10f;
+        [SerializeField] float horizontalGazeOffset = 0f;
         [SerializeField] float rotationDamping = 14f;
         [SerializeField] float positionDamping = 6f;
         [SerializeField] float recenterAngleDegrees = 30f;
@@ -86,7 +87,10 @@ namespace Inspection.UI
                 else _stableTime = 0f;
                 if (_stableTime < stableRequiredSeconds) return;
 
-                Vector3 desiredPos = _eye.position + _eye.forward * distance + Vector3.up * verticalGazeOffset;
+                Vector3 desiredPos = _eye.position
+                    + _eye.forward * distance
+                    + Vector3.up * verticalGazeOffset
+                    + _eye.right * horizontalGazeOffset;
                 transform.position = desiredPos;
                 Vector3 look = desiredPos - _eye.position;
                 if (look.sqrMagnitude > 1e-6f)
@@ -107,7 +111,10 @@ namespace Inspection.UI
 
             if (_recentering)
             {
-                Vector3 targetPos = _eye.position + _eye.forward * distance + Vector3.up * verticalGazeOffset;
+                Vector3 targetPos = _eye.position
+                    + _eye.forward * distance
+                    + Vector3.up * verticalGazeOffset
+                    + _eye.right * horizontalGazeOffset;
                 transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * positionDamping);
                 if (Vector3.Distance(transform.position, targetPos) < 0.01f) _recentering = false;
             }
