@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7730315335435113809}
   - component: {fileID: 2890335515157080747}
   - component: {fileID: 681310768756140842}
+  - component: {fileID: 2784020672576093350}
   m_Layer: 0
   m_Name: ExceptionButton
   m_TagString: Untagged
@@ -157,6 +158,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Inspection.Runtime::Inspection.UI.ExceptionButton
   label: {fileID: 4668815017018324176}
   button: {fileID: 7730315335435113809}
+--- !u!114 &2784020672576093350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 288437392152207974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 822ab73763f825b408d081178eec5d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Inspection.Runtime::Inspection.UI.PressFireOnDown
 --- !u!1 &2111576827296564639
 GameObject:
   m_ObjectHideFlags: 0

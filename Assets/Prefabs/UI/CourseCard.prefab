@@ -306,6 +306,7 @@ GameObject:
   - component: {fileID: 8582592039123421540}
   - component: {fileID: 2897246154784368930}
   - component: {fileID: 20213890167340889}
+  - component: {fileID: 1048073990538589382}
   m_Layer: 0
   m_Name: EnterButton
   m_TagString: Untagged
@@ -435,6 +436,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1048073990538589382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5553796952426755197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 822ab73763f825b408d081178eec5d1d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Inspection.Runtime::Inspection.UI.PressFireOnDown
 --- !u!1 &9001787745234208469
 GameObject:
   m_ObjectHideFlags: 0

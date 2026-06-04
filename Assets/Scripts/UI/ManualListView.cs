@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Inspection.App;
@@ -17,11 +18,15 @@ namespace Inspection.UI
         [SerializeField] GameObject emptyState;
         [SerializeField] TMP_Text errorLabel;
         [SerializeField] Button refreshButton;
+        [SerializeField] PaginationBar paginationBar;
+        [SerializeField] int pageSize = 6;
 
         ICourseClient _client;
         AppRouter _router;
         LoadingOverlay _overlay;
         CancellationTokenSource _cts;
+        List<CourseSummary> _allCourses = new List<CourseSummary>();
+        int _currentPage;
 
         public void Init(ICourseClient client, AppRouter router, LoadingOverlay overlay)
         {
@@ -32,6 +37,11 @@ namespace Inspection.UI
             {
                 refreshButton.onClick.RemoveAllListeners();
                 refreshButton.onClick.AddListener(() => _ = RefreshWithOverlayAsync());
+            }
+            if (paginationBar != null)
+            {
+                paginationBar.PageChanged -= OnPageChanged;
+                paginationBar.PageChanged += OnPageChanged;
             }
         }
 
@@ -45,38 +55,70 @@ namespace Inspection.UI
         public async Task RefreshAsync()
         {
             if (_client == null) { Log.E("ManualListView.Init not called"); return; }
-            ClearChildren(contentRoot);
             SetError(null);
 
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             try
             {
-                var courses = await _client.ListCoursesAsync(_cts.Token);
-                if (emptyState != null) emptyState.SetActive(courses.Count == 0);
-
-                foreach (var c in courses)
-                {
-                    var card = Instantiate(courseCardPrefab, contentRoot);
-                    var summary = c;
-                    card.Bind(summary.DisplayName, () => _ = OnEnterAsync(summary));
-                }
+                var raw = await _client.ListCoursesAsync(_cts.Token);
+                _allCourses = new List<CourseSummary>(raw);
+                if (_allCourses.Count < 8) InjectTestCourses();
             }
-            catch (OperationCanceledException) { }
+            catch (OperationCanceledException) { return; }
             catch (Exception ex)
             {
-                Log.E($"ListCourses failed: {ex}");
-                SetError("無法載入課程清單，請確認後端是否啟動。");
+                Log.W($"ListCourses failed, using fake data for UI test: {ex.Message}");
+                _allCourses = new List<CourseSummary>();
+                InjectTestCourses();
+                SetError("後端無法連線，目前顯示測試資料。");
+            }
+
+            _currentPage = 0;
+            RebuildPage();
+        }
+
+        void InjectTestCourses()
+        {
+            for (int i = 1; i <= 15; i++)
+                _allCourses.Add(new CourseSummary($"test-course-{i:00}", $"測試課程 {i:00}：{TestUtil.FakeCourseTitle(i)}"));
+        }
+
+        void OnPageChanged(int page) { _currentPage = page; RebuildPage(); }
+
+        void RebuildPage()
+        {
+            ClearChildren(contentRoot);
+            if (emptyState != null) emptyState.SetActive(_allCourses.Count == 0);
+            if (paginationBar != null)
+            {
+                int pages = Mathf.Max(1, (_allCourses.Count + pageSize - 1) / pageSize);
+                paginationBar.SetPageCount(pages);
+                paginationBar.gameObject.SetActive(pages > 1);
+                paginationBar.SetCurrentPage(_currentPage, false);
+            }
+
+            int start = _currentPage * pageSize;
+            int end = Mathf.Min(start + pageSize, _allCourses.Count);
+            for (int i = start; i < end; i++)
+            {
+                var summary = _allCourses[i];
+                var card = Instantiate(courseCardPrefab, contentRoot);
+                card.Bind(summary.DisplayName, () => _ = OnEnterAsync(summary));
             }
         }
 
         async Task OnEnterAsync(CourseSummary summary)
         {
-            if (_overlay == null || _client == null || _router == null) return;
+            if (_overlay == null || _router == null) return;
             _overlay.Show($"載入課程：{summary.DisplayName}…");
             try
             {
-                var course = await _client.GetCourseAsync(summary.Name, CancellationToken.None);
+                Course course;
+                if (summary.Name.StartsWith("test-course-"))
+                    course = TestUtil.FakeCourse(summary);
+                else
+                    course = await _client.GetCourseAsync(summary.Name, CancellationToken.None);
                 _router.ShowCourse(course);
             }
             catch (Exception ex)

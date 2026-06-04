@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Inspection.Domain;
 using TMPro;
 using UnityEngine;
@@ -7,15 +8,23 @@ using UnityEngine.UI;
 namespace Inspection.UI
 {
     /// <summary>
-    /// Hierarchical outline / index drawer for the current course. Groups steps by MainTitle and
-    /// SubTitle and lets the user jump straight to any step.
+    /// Hierarchical outline / index drawer for the current course. Groups
+    /// steps by MainTitle and SubTitle and lets the user jump straight to
+    /// any step. Paginated so long courses don't need scrolling — drag was
+    /// removed from the VR UI to stop finger-drift from triggering scroll
+    /// while pointing at a step row.
     /// </summary>
     public sealed class OutlinePanel : MonoBehaviour
     {
         [SerializeField] Transform contentRoot;
         [SerializeField] Button closeButton;
+        [SerializeField] PaginationBar paginationBar;
+        [SerializeField] int pageSize = 6;
 
         Action<int> _onJump;
+        Course _course;
+        int _currentStepOrder;
+        int _currentPage;
 
         public void Init(Action<int> onJumpToStepOrder)
         {
@@ -25,17 +34,50 @@ namespace Inspection.UI
                 closeButton.onClick.RemoveAllListeners();
                 closeButton.onClick.AddListener(() => Hide());
             }
+            if (paginationBar != null)
+            {
+                paginationBar.PageChanged -= OnPageChanged;
+                paginationBar.PageChanged += OnPageChanged;
+            }
         }
 
         public void Bind(Course course, int currentStepOrder)
         {
+            _course = course;
+            _currentStepOrder = currentStepOrder;
+
+            // Snap to the page containing the active step so the highlight is visible.
+            int idx = (_course?.Steps != null) ? FindIndex(_course.Steps, currentStepOrder) : -1;
+            if (idx >= 0) _currentPage = idx / pageSize;
+            else _currentPage = 0;
+
+            RebuildPage();
+        }
+
+        void OnPageChanged(int page) { _currentPage = page; RebuildPage(); }
+
+        void RebuildPage()
+        {
             ClearChildren(contentRoot);
-            if (course == null || course.Steps == null) return;
+            if (_course == null || _course.Steps == null) return;
+
+            int total = _course.Steps.Count;
+            int pages = Mathf.Max(1, (total + pageSize - 1) / pageSize);
+            if (paginationBar != null)
+            {
+                paginationBar.SetPageCount(pages);
+                paginationBar.gameObject.SetActive(pages > 1);
+                paginationBar.SetCurrentPage(_currentPage, false);
+            }
+
+            int start = _currentPage * pageSize;
+            int end = Mathf.Min(start + pageSize, total);
 
             string lastMain = null;
             string lastSub = null;
-            foreach (var step in course.Steps)
+            for (int i = start; i < end; i++)
             {
+                var step = _course.Steps[i];
                 if (step.MainTitle != lastMain)
                 {
                     SpawnHeader(step.MainTitle, isMain: true);
@@ -47,16 +89,21 @@ namespace Inspection.UI
                     SpawnHeader(step.SubTitle, isMain: false);
                     lastSub = step.SubTitle;
                 }
-                SpawnStepRow(step, currentStepOrder);
+                SpawnStepRow(step, _currentStepOrder);
             }
 
-            // Force layout refresh — VerticalLayoutGroup sometimes doesn't realize new children
-            // exist until the end of the frame, which leaves the panel looking empty.
             LayoutRebuilder.ForceRebuildLayoutImmediate(contentRoot as RectTransform);
         }
 
         public void Show() => gameObject.SetActive(true);
         public void Hide() => gameObject.SetActive(false);
+
+        static int FindIndex(IReadOnlyList<Step> steps, int order)
+        {
+            for (int i = 0; i < steps.Count; i++)
+                if (steps[i].Order == order) return i;
+            return -1;
+        }
 
         void SpawnHeader(string text, bool isMain)
         {
@@ -83,7 +130,7 @@ namespace Inspection.UI
         void SpawnStepRow(Step step, int currentStepOrder)
         {
             var go = new GameObject("StepRow",
-                typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement));
+                typeof(RectTransform), typeof(Image), typeof(Button), typeof(LayoutElement), typeof(PressFireOnDown));
             go.transform.SetParent(contentRoot, false);
             var le = go.GetComponent<LayoutElement>();
             le.preferredHeight = 56;
@@ -102,11 +149,7 @@ namespace Inspection.UI
             rt.offsetMax = new Vector2(-8, 0);
 
             int captured = step.Order;
-            btn.onClick.AddListener(() =>
-            {
-                _onJump?.Invoke(captured);
-                Hide();
-            });
+            btn.onClick.AddListener(() => _onJump?.Invoke(captured));
         }
 
         static GameObject NewText(Transform parent, string text, float size, Color color)
@@ -118,7 +161,7 @@ namespace Inspection.UI
             t.fontSize = size;
             t.alignment = TextAlignmentOptions.MidlineLeft;
             t.color = color;
-            t.enableWordWrapping = false;
+            t.textWrappingMode = TextWrappingModes.NoWrap;
             t.overflowMode = TextOverflowModes.Ellipsis;
             return go;
         }

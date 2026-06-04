@@ -34,6 +34,7 @@ namespace Inspection.UI
 
         [SerializeField] OutlinePanel outlinePanel;
         [SerializeField] Button outlineToggleButton;
+        [SerializeField] PaginationBar descriptionPagination;
 
         ICourseClient _client;
         AppRouter _router;
@@ -54,6 +55,31 @@ namespace Inspection.UI
             if (backToListButton != null) backToListButton.onClick.AddListener(OnBackToList);
             if (outlineToggleButton != null) outlineToggleButton.onClick.AddListener(OnToggleOutline);
             if (outlinePanel != null) outlinePanel.Init(GoToStepOrder);
+
+            if (description != null) description.overflowMode = TextOverflowModes.Page;
+            if (descriptionPagination != null)
+            {
+                descriptionPagination.PageChanged -= OnDescriptionPageChanged;
+                descriptionPagination.PageChanged += OnDescriptionPageChanged;
+            }
+        }
+
+        void OnDescriptionPageChanged(int page)
+        {
+            if (description == null) return;
+            description.pageToDisplay = page + 1; // TMP pages are 1-based
+        }
+
+        void SyncDescriptionPagination()
+        {
+            if (description == null || descriptionPagination == null) return;
+            // Force layout so TMP knows how many pages the text spans.
+            description.ForceMeshUpdate();
+            int total = Mathf.Max(1, description.textInfo.pageCount);
+            descriptionPagination.SetPageCount(total);
+            descriptionPagination.gameObject.SetActive(total > 1);
+            descriptionPagination.SetCurrentPage(0, false);
+            description.pageToDisplay = 1;
         }
 
         public void Bind(Course course)
@@ -66,7 +92,8 @@ namespace Inspection.UI
                 return;
             }
             ShowStepAt(0);
-            if (outlinePanel != null) outlinePanel.Hide();
+            // Outline is the always-visible sidebar in the master-detail layout,
+            // not a toggleable overlay — AppRouter activates it; don't hide it here.
         }
 
         void OnToggleOutline()
@@ -101,6 +128,7 @@ namespace Inspection.UI
             if (stepCounter != null) stepCounter.text = $"{index + 1} / {_course.Steps.Count}";
             if (stepName != null) stepName.text = step.Name;
             if (description != null) description.text = step.Description ?? string.Empty;
+            SyncDescriptionPagination();
 
             if (nextIndication != null)
             {
