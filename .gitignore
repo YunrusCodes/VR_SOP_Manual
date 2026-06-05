@@ -79,6 +79,14 @@ __pycache__/
 
 # api/storage/ media intentionally tracked: paid AI generations (Seedance / Seedream)
 # that we don't want to regenerate. If repo grows too large, move to git LFS.
+# Per-edit auto-snapshots and soft-deletes do not belong in git history.
+api/storage/_trash/
+api/storage/**/_backups/
+
+# Node / Vite admin SPA artifacts
+node_modules/
+admin/dist/
+*.tsbuildinfo
 
 # dotnet (used by api/.csharp_check standalone CsvParser sanity tool)
 bin/

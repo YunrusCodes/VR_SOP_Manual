@@ -1,0 +1,7 @@
+遇到實驗室人員受傷或不適時的標準應變流程。預計時間：4 分鐘。
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,評估,現場,確認現場安全,靠近傷者前先確認現場無危險源（電擊、火源、化學洩漏）。若有，先排除危險或將傷者拖離。,,評估傷者意識,,,,,,
+2,評估,傷者,確認意識與呼吸,輕拍肩膀並大聲呼喚。觀察胸部起伏 10 秒判斷是否有呼吸。若無呼吸或僅有喘息，準備執行 CPR。,,求救並進入處置,無意識無呼吸,立刻請旁人撥 119、取 AED，並開始 CPR：胸外按壓 30 次配合人工呼吸 2 次，循環不停直到救護人員到場。,,,,
+3,處置,求救,呼叫求援,請旁人撥 119、通知實驗室值班與安全衛生人員。提供：地點、傷者狀況、受傷原因。若涉及化學品，提供 SDS。,,依傷情處置,,,,,,
+4,處置,止血/沖洗,止血或化學品沖洗,出血傷口：使用乾淨敷料直接壓迫 10 分鐘。化學品潑灑：用洗眼器或淋浴器沖洗至少 15 分鐘，沖洗時不要停。,,等待救護人員,,,,,,
+5,結束,交接,向救護人員交接,救護人員到場時，告知：事發時間、傷情、已執行的處置、傷者個資。完成後填寫工安事故報告，24 小時內呈安衛室。,,完成課程,,,,,,

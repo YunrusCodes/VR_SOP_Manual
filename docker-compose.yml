@@ -1,8 +1,10 @@
 services:
   api:
     build:
-      context: ./api
-      dockerfile: Dockerfile
+      # Build context is the repo root so the Dockerfile can pull in both
+      # api/ (FastAPI service) and admin/ (Vite SPA, built in stage 1).
+      context: .
+      dockerfile: api/Dockerfile
     image: vr-sop-manual-api:latest
     container_name: vr-sop-manual-api
     ports:

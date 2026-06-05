@@ -63,15 +63,13 @@ namespace Inspection.UI
             {
                 var raw = await _client.ListCoursesAsync(_cts.Token);
                 _allCourses = new List<CourseSummary>(raw);
-                if (_allCourses.Count < 8) InjectTestCourses();
             }
             catch (OperationCanceledException) { return; }
             catch (Exception ex)
             {
-                Log.W($"ListCourses failed, using fake data for UI test: {ex.Message}");
+                Log.W($"ListCourses failed: {ex.Message}");
                 _allCourses = new List<CourseSummary>();
-                InjectTestCourses();
-                SetError("後端無法連線，目前顯示測試資料。");
+                SetError("後端無法連線，請確認 API 是否啟動或網路設定。");
             }
 
             _currentPage = 0;

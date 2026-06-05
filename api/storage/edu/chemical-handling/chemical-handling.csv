@@ -1,0 +1,7 @@
+藥品櫃取用 SOP，涵蓋 SDS 查閱、稱量、貯存與廢液回收。預計時間：5 分鐘。
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,前置,資料查閱,閱讀 SDS,從藥品櫃或線上資料庫查閱 SDS（安全資料表）。確認危害分類、儲存條件、急救處置、相容性。,,穿戴對應 PPE,,,,,,
+2,前置,PPE,依 SDS 配戴防護,依 SDS 推薦選擇手套材質與口罩等級。強酸/強鹼或揮發性溶劑請在抽氣櫃內操作。,,前往藥品櫃取用,,,,,,
+3,取用,稱量,從藥品櫃取用並稱量,登記取用量與時間到藥品登記本。使用乾淨藥匙稱量，不可將剩餘藥品倒回原瓶以避免污染。,,回實驗台進行操作,取用過量,將多餘部分依廢棄物分類處理，不可倒回原瓶；登記本註記實際使用量。,,,,
+4,結束,歸位,藥品歸位,操作完成後立即將原瓶歸回藥品櫃，確認瓶蓋鎖緊、瓶身乾淨。強酸與強鹼分開存放、不可同櫃。,,處理廢液,,,,,,
+5,結束,廢液,廢液分類回收,依「實驗室安全須知」的廢棄物分類流程處理。標籤須清楚寫明內容、日期與操作人員。,,完成課程,,,,,,

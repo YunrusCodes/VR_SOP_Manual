@@ -1,0 +1,7 @@
+如何寫一份能被他人重現、能在審查時站得住腳的實驗紀錄。預計時間：4 分鐘。
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,開頭,識別,標題、日期、編號,每一份紀錄必須有：實驗標題、執行日期、操作員、實驗編號、相關計畫案編號。標題簡短但能讓六個月後的自己讀懂。,,寫下目的與假設,,,,,,
+2,前置,目的,目的與假設,用一兩句話寫清楚：本次想驗證/觀察什麼？預期結果是什麼？假設可以用如果...則...的句型，方便結束時對照。,,列出材料與設備,,,,,,
+3,前置,資源,材料與設備清單,列出所有藥品（含廠牌、批號、純度）、儀器（含型號、序號、最近校期）。缺一個就重做。,,記錄操作步驟,,,,,,
+4,執行,操作,步驟與觀察,邊做邊寫，不要事後憑印象補。每個關鍵步驟記下時間、實際使用量（不是預定量）、觀察到的異常。,,整理結果與結論,操作中途出錯,錯誤不可塗黑或撕頁；劃單線刪除、寫上原因與修正，並簽上日期。實驗紀錄是法律文件。,,,,
+5,結束,結果,結果分析與結論,貼上原始數據（拍照或印出）、寫下圖表編號。結論回應一開始的假設，並列出待解問題。,,完成課程,,,,,,

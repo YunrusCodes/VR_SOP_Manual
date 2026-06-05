@@ -1,9 +1,23 @@
+# ---------------------------------------------------------------------------
+# Stage 1: build the admin SPA
+# ---------------------------------------------------------------------------
+FROM node:20-slim AS admin-build
+WORKDIR /admin
+COPY admin/package.json admin/package-lock.json* ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+COPY admin/ ./
+RUN npm run build
+
+# ---------------------------------------------------------------------------
+# Stage 2: API
+# ---------------------------------------------------------------------------
 FROM python:3.12-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    STORAGE_DIR=/data/storage
+    STORAGE_DIR=/data/storage \
+    ADMIN_DIST_DIR=/app/static/admin
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg curl \
@@ -11,10 +25,11 @@ RUN apt-get update \
 
 WORKDIR /app
 
-COPY requirements.txt ./
+COPY api/requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY main.py seed.py ./
+COPY api/main.py api/seed.py api/schema.py api/csv_io.py ./
+COPY --from=admin-build /admin/dist /app/static/admin
 
 RUN mkdir -p /data/storage
 

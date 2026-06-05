@@ -1,0 +1,8 @@
+從開機到收尾，帶你做一次完整的光學顯微鏡觀察。預計時間：6 分鐘。
+Step Order,Main Title,Sub Title,Step Name,Description,Video Or Image,Next Step Indication,Exception Handling Option 1,Action After Selecting Handling Option 1,Exception Handling Option 2,Action After Selecting Handling Option 2,Exception Handling Option 3,Action After Selecting Handling Option 3
+1,啟動,電源與光源,開機與調整光源,確認電源線接好，按下顯微鏡底部電源開關，待光源穩定後將亮度旋鈕轉到中段。若使用 LED 光源，先選白光模式。,,拿出待觀察玻片,,,,,,
+2,玻片,安裝,放置玻片於載物台,用機械式載物台夾住玻片，將觀察樣本對準光圈中央。移動 X/Y 旋鈕讓目標區域位於正中央。,,切到低倍鏡開始對焦,,,,,,
+3,對焦,低倍,使用 4x 或 10x 對焦,旋轉到 10x 接物鏡。先用粗調對焦旋鈕讓影像出現，再用細調旋鈕確認清晰。若看到的是黑色，檢查光源是否被擋。,,切到高倍鏡細看,看不到任何影像,可能玻片貼反、光圈關閉或樣本不在視野中央。先回到 4x 重新對焦並確認光圈打開。,,,,
+4,對焦,高倍,切換到 40x 並微調,切換到 40x 接物鏡，只用細調旋鈕對焦——不可在高倍下使用粗調，會撞壞玻片。如需 100x 油鏡，加一滴香柏油。,,拍照或紀錄觀察結果,,,,,,
+5,紀錄,觀察,拍照與描述,拍下視野照片並在筆記本記錄：放大倍率、樣本名稱、特徵描述。若有特殊發現，標註位置以便後續比對。,,進入收尾清潔,,,,,,
+6,結束,清潔,關機與清潔,切回 4x 接物鏡，下降載物台後取下玻片。用拭鏡紙清潔接物鏡與目鏡，覆上防塵罩。,,完成課程,,,,,,
