@@ -73,13 +73,17 @@ namespace Inspection.UI
         void SyncDescriptionPagination()
         {
             if (description == null || descriptionPagination == null) return;
-            // Force layout so TMP knows how many pages the text spans.
-            description.ForceMeshUpdate();
+            // Reset BEFORE recomputing: pageToDisplay carrying a high value from the
+            // previous (longer) course makes TMP report a stale pageCount, which then
+            // leaves the pagination bar visible on a one-page step.
+            description.pageToDisplay = 1;
+            // Force reparsing so the page count reflects the new text, not the cached
+            // mesh from the last step. Default ForceMeshUpdate() does not always re-parse.
+            description.ForceMeshUpdate(ignoreActiveState: true, forceTextReparsing: true);
             int total = Mathf.Max(1, description.textInfo.pageCount);
             descriptionPagination.SetPageCount(total);
             descriptionPagination.gameObject.SetActive(total > 1);
             descriptionPagination.SetCurrentPage(0, false);
-            description.pageToDisplay = 1;
         }
 
         public void Bind(Course course)

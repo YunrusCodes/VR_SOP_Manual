@@ -43,9 +43,15 @@ namespace Inspection.UI
             bool show = false;
             if (hand != null && handAnchor != null && hand.IsTracked)
             {
+                // Hand tracking: reveal on palm-up gesture.
                 Vector3 palmWorld = handAnchor.TransformDirection(palmNormalLocal.normalized);
                 float dot = Vector3.Dot(palmWorld, Vector3.up);
                 show = _showing ? (dot > hideThreshold) : (dot > showThreshold);
+            }
+            else if (handAnchor != null)
+            {
+                // Controller fallback: hold the left grip (middle-finger trigger).
+                show = OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.LTouch);
             }
 
             if (_showing != show)

@@ -54,7 +54,7 @@ namespace Inspection.Debugging
         {
             if (_raycaster == null)
             {
-                var c = GameObject.Find("RootCanvas");
+                var c = GameObject.Find("App_Manual");
                 if (c != null) _raycaster = c.GetComponent<TrackedDeviceGraphicRaycaster>();
             }
 

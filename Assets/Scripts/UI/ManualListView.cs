@@ -81,7 +81,7 @@ namespace Inspection.UI
         void InjectTestCourses()
         {
             for (int i = 1; i <= 15; i++)
-                _allCourses.Add(new CourseSummary($"test-course-{i:00}", $"測試課程 {i:00}：{TestUtil.FakeCourseTitle(i)}"));
+                _allCourses.Add(new CourseSummary($"test-course-{i:00}", TestUtil.FakeCourseTitle(i)));
         }
 
         void OnPageChanged(int page) { _currentPage = page; RebuildPage(); }

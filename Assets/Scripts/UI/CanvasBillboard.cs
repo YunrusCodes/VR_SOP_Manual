@@ -37,6 +37,21 @@ namespace Inspection.UI
             _recentering = false;
         }
 
+        /// <summary>
+        /// Mark the panel as already placed at its current transform, so the
+        /// billboard skips the head-stability wait and only does lazy follow.
+        /// Use when handing off position from another panel (PanelToggleGroup
+        /// does this on tab switch) — otherwise the panel would briefly hold
+        /// its stale last-disabled position before snapping to gaze.
+        /// </summary>
+        public void MarkPlaced()
+        {
+            _firstFramePlaced = true;
+            _stableTime = stableRequiredSeconds;
+            _eyeWaitFrames = 30;
+            _recentering = false;
+        }
+
         Transform FindCenterEye()
         {
             var rig = GameObject.Find("OVRCameraRig");

@@ -33,9 +33,37 @@ namespace Inspection.UI
             if (clicked.panel == null) return;
 
             bool wasActive = clicked.panel.activeSelf;
+
+            // Capture position of whichever panel is currently visible so the next
+            // panel can take it over — otherwise the newly-enabled panel would flash
+            // at its stale last-disabled position before its billboard re-snaps.
+            GameObject currentlyVisible = null;
+            for (int i = 0; i < entries.Count; i++)
+            {
+                var p = entries[i].panel;
+                if (p != null && p.activeSelf) { currentlyVisible = p; break; }
+            }
+
             for (int i = 0; i < entries.Count; i++)
                 if (entries[i].panel != null) entries[i].panel.SetActive(false);
-            if (!wasActive) clicked.panel.SetActive(true);
+
+            if (!wasActive)
+            {
+                if (currentlyVisible != null && currentlyVisible != clicked.panel)
+                {
+                    clicked.panel.transform.SetPositionAndRotation(
+                        currentlyVisible.transform.position,
+                        currentlyVisible.transform.rotation);
+                }
+                clicked.panel.SetActive(true);
+                // SetActive(true) fires CanvasBillboard.OnEnable which calls Recenter;
+                // override that — we just placed the panel correctly.
+                if (currentlyVisible != null && currentlyVisible != clicked.panel)
+                {
+                    var billboard = clicked.panel.GetComponent<CanvasBillboard>();
+                    if (billboard != null) billboard.MarkPlaced();
+                }
+            }
 
             RefreshIcons();
         }

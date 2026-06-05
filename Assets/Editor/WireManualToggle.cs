@@ -27,8 +27,8 @@ namespace Inspection.EditorTools
         [MenuItem("Tools/Inspection/Wire Manual Toggle")]
         public static void Wire()
         {
-            var rootCanvasGo = GameObject.Find("RootCanvas");
-            if (rootCanvasGo == null) { Debug.LogError("RootCanvas missing"); return; }
+            var rootCanvasGo = GameObject.Find("App_Manual");
+            if (rootCanvasGo == null) { Debug.LogError("App_Manual missing"); return; }
 
             var leftHandAnchor = FindLeftHandAnchor();
             if (leftHandAnchor == null) { Debug.LogError("LeftHandAnchor not found under OVRCameraRig/TrackingSpace"); return; }
@@ -55,14 +55,15 @@ namespace Inspection.EditorTools
             // Strip any prior TunerCanvas / TestCanvas / PanelAnchor wherever they sit —
             // Resources.FindObjectsOfTypeAll includes inactive scene objects (GameObject.Find
             // skips those, hence prior versions accumulated hidden tuners after each re-wire).
-            DestroySceneObjectsByName("TunerCanvas");
+            DestroySceneObjectsByName("App_PalmTuner");
+            DestroySceneObjectsByName("App_PalmTest");
+            DestroySceneObjectsByName("TunerCanvas"); // legacy from earlier wirings
             DestroySceneObjectsByName("TestCanvas");
             DestroySceneObjectsByName("PanelAnchor");
 
-            // Drop the layered stack: each panel billboards itself, and the palm
-            // buttons drive a PanelToggleGroup so only one panel is open at a time.
-            var staleStacked = rootCanvasGo.GetComponent<StackedPanel>();
-            if (staleStacked != null) Object.DestroyImmediate(staleStacked);
+            // Drop any stale layered-stack components left from earlier prototypes;
+            // each panel now billboards itself and the palm discs drive a single
+            // PanelToggleGroup.
             EnsureManualBillboard(rootCanvasGo);
 
             // PalmMenuRoot stays active so its Update keeps firing while the menu itself is hidden.
@@ -222,13 +223,17 @@ namespace Inspection.EditorTools
 
         static GameObject BuildTunerCanvas(PalmMenuVisibility visibility)
         {
-            // Root-level world-space canvas, manual-sized. Position+rotation are
-            // overwritten each frame by StackedPanelManager.
-            var tcGo = new GameObject("TunerCanvas", typeof(RectTransform));
+            // Compact dialog-style canvas; sizing chosen to feel similar to the
+            // manual sidebar (typography around 30-42 px) instead of a billboard
+            // poster with oversized text.
+            const float kCanvasW = 700f;
+            const float kCanvasH = 500f;
+
+            var tcGo = new GameObject("App_PalmTuner", typeof(RectTransform));
             var trt = tcGo.GetComponent<RectTransform>();
             trt.localScale = new Vector3(0.00018f, 0.00018f, 0.00018f);
             trt.pivot = new Vector2(0.5f, 0.5f);
-            trt.sizeDelta = new Vector2(1920, 1080);
+            trt.sizeDelta = new Vector2(kCanvasW, kCanvasH);
 
             var canvas = tcGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
@@ -237,10 +242,8 @@ namespace Inspection.EditorTools
             var pointable = tcGo.AddComponent<PointableCanvas>();
             SetField(pointable, "_canvas", canvas);
 
-            // Own billboard so it re-centres in front of the user when toggled on.
             AttachStandardBillboard(tcGo);
 
-            // UISurface — interaction chain identical to RootCanvas's surface.
             var us = new GameObject("UISurface", typeof(RectTransform));
             us.transform.SetParent(tcGo.transform, false);
             var srt = us.GetComponent<RectTransform>();
@@ -252,7 +255,7 @@ namespace Inspection.EditorTools
             var rayInteractable = us.AddComponent<RayInteractable>();
             var boundsClipper = us.AddComponent<BoundsClipper>();
             SetField(boundsClipper, "_position", Vector3.zero);
-            SetField(boundsClipper, "_size", new Vector3(1920, 1080, 0.01f));
+            SetField(boundsClipper, "_size", new Vector3(kCanvasW, kCanvasH, 0.01f));
             var clipperDriver = us.AddComponent<RectTransformBoundsClipperDriver>();
             SetField(clipperDriver, "_boundsClipper", boundsClipper);
             var clippedSurface = us.AddComponent<ClippedPlaneSurface>();
@@ -267,7 +270,6 @@ namespace Inspection.EditorTools
             SetField(pokeInteractable, "_exitHoverNormal", 0.20f);
             SetField(pokeInteractable, "_cancelSelectTangent", 0.10f);
 
-            // Panel content fills the canvas behind the UISurface.
             var panel = new GameObject("PalmOffsetTuner",
                 typeof(RectTransform), typeof(UIImage), typeof(VerticalLayoutGroup));
             panel.transform.SetParent(tcGo.transform, false);
@@ -276,8 +278,11 @@ namespace Inspection.EditorTools
             prt.offsetMin = Vector2.zero; prt.offsetMax = Vector2.zero;
             panel.GetComponent<UIImage>().color = new Color(0.05f, 0.07f, 0.10f, 0.92f);
             var vlg = panel.GetComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(80, 80, 80, 80);
-            vlg.spacing = 40;
+            vlg.padding = new RectOffset(30, 30, 30, 30);
+            vlg.spacing = 20;
+            vlg.childControlWidth = true;
+            vlg.childControlHeight = true;
+            vlg.childForceExpandWidth = true;
             vlg.childForceExpandHeight = false;
             vlg.childAlignment = TextAnchor.UpperCenter;
 
@@ -285,6 +290,7 @@ namespace Inspection.EditorTools
             var xVal = SpawnTunerRow(panel.transform, "X", out var xMinus, out var xPlus);
             var yVal = SpawnTunerRow(panel.transform, "Y", out var yMinus, out var yPlus);
             var zVal = SpawnTunerRow(panel.transform, "Z", out var zMinus, out var zPlus);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(panel.GetComponent<RectTransform>());
 
             var tuner = panel.AddComponent<PalmOffsetTuner>();
             SetField(tuner, "target", visibility);
@@ -307,10 +313,10 @@ namespace Inspection.EditorTools
         {
             var go = new GameObject("Header", typeof(RectTransform), typeof(LayoutElement));
             go.transform.SetParent(parent, false);
-            go.GetComponent<LayoutElement>().preferredHeight = 140;
+            go.GetComponent<LayoutElement>().preferredHeight = 60;
             var tmp = go.AddComponent<TextMeshProUGUI>();
             tmp.text = text;
-            tmp.fontSize = 100;
+            tmp.fontSize = 40;
             tmp.color = Color.white;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.raycastTarget = false;
@@ -318,19 +324,25 @@ namespace Inspection.EditorTools
 
         static TMP_Text SpawnTunerRow(Transform parent, string axisLabel, out Button minusBtn, out Button plusBtn)
         {
+            // Each row is a CourseCard-styled rectangle so the tuner shares the
+            // manual sidebar's visual language.
             var row = new GameObject($"Row_{axisLabel}",
-                typeof(RectTransform), typeof(LayoutElement), typeof(HorizontalLayoutGroup));
+                typeof(RectTransform), typeof(UIImage), typeof(LayoutElement), typeof(HorizontalLayoutGroup));
             row.transform.SetParent(parent, false);
-            row.GetComponent<LayoutElement>().preferredHeight = 200;
+            row.GetComponent<LayoutElement>().preferredHeight = 80;
+            row.GetComponent<UIImage>().color = new Color(0.12f, 0.13f, 0.18f, 0.95f);
             var hlg = row.GetComponent<HorizontalLayoutGroup>();
-            hlg.spacing = 40;
+            hlg.padding = new RectOffset(20, 20, 10, 10);
+            hlg.spacing = 16;
+            hlg.childControlWidth = true;
+            hlg.childControlHeight = true;
             hlg.childForceExpandWidth = false;
             hlg.childForceExpandHeight = true;
             hlg.childAlignment = TextAnchor.MiddleLeft;
 
-            SpawnRowLabel(row.transform, axisLabel, 110, 120);
-            minusBtn = SpawnTunerButton(row.transform, "-");
-            var valLabel = SpawnRowLabel(row.transform, "0 cm", 90, 380);
+            SpawnRowLabel(row.transform, axisLabel, 36, 50);
+            minusBtn = SpawnTunerButton(row.transform, "−");
+            var valLabel = SpawnRowLabel(row.transform, "0 cm", 32, 160);
             valLabel.alignment = TextAlignmentOptions.Center;
             plusBtn = SpawnTunerButton(row.transform, "+");
 
@@ -353,13 +365,14 @@ namespace Inspection.EditorTools
 
         static GameObject BuildTestCanvas()
         {
-            // Placeholder test canvas — same plumbing as the tuner but with a single
-            // label so we can see layer behaviour without a full UI.
-            var tcGo = new GameObject("TestCanvas", typeof(RectTransform));
+            const float kCanvasW = 700f;
+            const float kCanvasH = 500f;
+
+            var tcGo = new GameObject("App_PalmTest", typeof(RectTransform));
             var trt = tcGo.GetComponent<RectTransform>();
             trt.localScale = new Vector3(0.00018f, 0.00018f, 0.00018f);
             trt.pivot = new Vector2(0.5f, 0.5f);
-            trt.sizeDelta = new Vector2(1920, 1080);
+            trt.sizeDelta = new Vector2(kCanvasW, kCanvasH);
 
             var canvas = tcGo.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
@@ -381,7 +394,7 @@ namespace Inspection.EditorTools
             var rayInteractable = us.AddComponent<RayInteractable>();
             var boundsClipper = us.AddComponent<BoundsClipper>();
             SetField(boundsClipper, "_position", Vector3.zero);
-            SetField(boundsClipper, "_size", new Vector3(1920, 1080, 0.01f));
+            SetField(boundsClipper, "_size", new Vector3(kCanvasW, kCanvasH, 0.01f));
             var clipperDriver = us.AddComponent<RectTransformBoundsClipperDriver>();
             SetField(clipperDriver, "_boundsClipper", boundsClipper);
             var clippedSurface = us.AddComponent<ClippedPlaneSurface>();
@@ -404,8 +417,8 @@ namespace Inspection.EditorTools
             prt.offsetMin = Vector2.zero; prt.offsetMax = Vector2.zero;
             panel.GetComponent<UIImage>().color = new Color(0.10f, 0.05f, 0.15f, 0.92f);
             var vlg = panel.GetComponent<VerticalLayoutGroup>();
-            vlg.padding = new RectOffset(80, 80, 80, 80);
-            vlg.spacing = 40;
+            vlg.padding = new RectOffset(30, 30, 30, 30);
+            vlg.spacing = 20;
             vlg.childForceExpandHeight = false;
             vlg.childAlignment = TextAnchor.MiddleCenter;
 
@@ -450,8 +463,8 @@ namespace Inspection.EditorTools
                 typeof(RectTransform), typeof(UIImage), typeof(Button), typeof(LayoutElement), typeof(PressFireOnDown));
             go.transform.SetParent(parent, false);
             var le = go.GetComponent<LayoutElement>();
-            le.preferredWidth = 240;
-            le.preferredHeight = 180;
+            le.preferredWidth = 84;
+            le.preferredHeight = 60;
             var img = go.GetComponent<UIImage>();
             img.color = new Color(0.20f, 0.28f, 0.40f, 0.95f);
             var btn = go.GetComponent<Button>();
@@ -471,7 +484,7 @@ namespace Inspection.EditorTools
             lrt.offsetMin = Vector2.zero; lrt.offsetMax = Vector2.zero;
             var tmp = lbl.AddComponent<TextMeshProUGUI>();
             tmp.text = text;
-            tmp.fontSize = 130;
+            tmp.fontSize = 40;
             tmp.color = Color.white;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.raycastTarget = false;

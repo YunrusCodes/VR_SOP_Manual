@@ -17,7 +17,6 @@ namespace Inspection.UI
     public sealed class OutlinePanel : MonoBehaviour
     {
         [SerializeField] Transform contentRoot;
-        [SerializeField] Button closeButton;
         [SerializeField] PaginationBar paginationBar;
         [SerializeField] int pageSize = 6;
 
@@ -29,11 +28,6 @@ namespace Inspection.UI
         public void Init(Action<int> onJumpToStepOrder)
         {
             _onJump = onJumpToStepOrder;
-            if (closeButton != null)
-            {
-                closeButton.onClick.RemoveAllListeners();
-                closeButton.onClick.AddListener(() => Hide());
-            }
             if (paginationBar != null)
             {
                 paginationBar.PageChanged -= OnPageChanged;

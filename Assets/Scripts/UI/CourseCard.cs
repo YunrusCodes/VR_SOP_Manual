@@ -9,15 +9,13 @@ namespace Inspection.UI
     public sealed class CourseCard : MonoBehaviour
     {
         [SerializeField] TMP_Text title;
-        [SerializeField] Button enterButton;
 
         public void Bind(string displayName, Action onEnter)
         {
             if (title != null) title.text = displayName;
 
-            // Ensure the whole card is clickable, not just the small Enter button — VR ray
-            // aiming at a 160px button is hard. Add a Button component on the card root that
-            // forwards to the same handler.
+            // Whole card is the button — a 160 px enter button was painful to aim
+            // at with a ray, so the entire row now forwards to the handler.
             var cardBtn = GetComponent<Button>();
             if (cardBtn == null)
             {
@@ -27,12 +25,6 @@ namespace Inspection.UI
             }
             cardBtn.onClick.RemoveAllListeners();
             cardBtn.onClick.AddListener(() => onEnter?.Invoke());
-
-            if (enterButton != null)
-            {
-                enterButton.onClick.RemoveAllListeners();
-                enterButton.onClick.AddListener(() => onEnter?.Invoke());
-            }
         }
     }
 }
